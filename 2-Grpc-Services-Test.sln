@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database-Service", "Database-Service\Database-Service.csproj", "{DE429FC7-914B-4CA5-9867-671A3220A36B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Currency-WorkerService", "Currency-WorkerService\Currency-WorkerService.csproj", "{23791A8C-F5FD-4C10-A0F7-3A25A3C5EE93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DE429FC7-914B-4CA5-9867-671A3220A36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE429FC7-914B-4CA5-9867-671A3220A36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE429FC7-914B-4CA5-9867-671A3220A36B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23791A8C-F5FD-4C10-A0F7-3A25A3C5EE93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23791A8C-F5FD-4C10-A0F7-3A25A3C5EE93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23791A8C-F5FD-4C10-A0F7-3A25A3C5EE93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23791A8C-F5FD-4C10-A0F7-3A25A3C5EE93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

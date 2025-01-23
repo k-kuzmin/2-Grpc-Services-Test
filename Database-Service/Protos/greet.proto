@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Database_Service";
+
+package currency;
+
+service CurrencyService {
+  rpc UpdateCurrency (UpdateCurrencyRequest) returns (CurrencyReply);
+}
+
+message UpdateCurrencyRequest {
+  string code = 1;
+  string name = 2;
+  double rate = 3;
+}
+
+message CurrencyReply {
+  string code = 1;
+  string name = 2;
+  double rate = 3;
+}

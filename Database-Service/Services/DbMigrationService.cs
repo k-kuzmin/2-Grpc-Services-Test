@@ -1,32 +1,31 @@
-﻿using Context;
+﻿using Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Services
+namespace Services;
+
+public class DbMigrationService
 {
-    public class DbMigrationService
+    private readonly ILogger<DbMigrationService> _logger;
+    private readonly ApplicationDbContext _context;
+
+    public DbMigrationService(
+        ILogger<DbMigrationService> logger,
+        ApplicationDbContext context)
     {
-        private readonly ILogger<DbMigrationService> _logger;
-        private readonly ApplicationDbContext _context;
+        _logger = logger;
+        _context = context;
+    }
 
-        public DbMigrationService(
-            ILogger<DbMigrationService> logger,
-            ApplicationDbContext context)
+    public void Migrate()
+    {
+        try
         {
-            _logger = logger;
-            _context = context;
+            _logger.LogInformation("Start migrate");
+            _context.Database.Migrate();
         }
-
-        public void Migrate()
+        catch (Exception ex) 
         {
-            try
-            {
-                _logger.LogInformation("Start migrate");
-                _context.Database.Migrate();
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogCritical(ex, ex.Message);
-            }
+            _logger.LogCritical(ex, ex.Message);
         }
     }
 }

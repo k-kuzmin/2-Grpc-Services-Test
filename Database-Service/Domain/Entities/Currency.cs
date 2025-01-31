@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Entities;
+namespace Domain.Entities;
 
-public class Currency
+public class Currency : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
     public required string Code { get; set; }
     public required string Name { get; set; }
     public decimal Rate { get; set; }

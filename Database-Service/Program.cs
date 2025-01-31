@@ -1,6 +1,8 @@
-using Context;
+using Domain;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +12,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddScoped<DbMigrationService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using Database_Service;
-using Entities;
+using Domain.Entities;
 
-namespace Mappers
+namespace Mappers;
+
+public class CurrencyMapper : Profile
 {
-    public class CurrencyMapper : Profile
+    public CurrencyMapper()
     {
-        public CurrencyMapper()
-        {
-            CreateMap<Currency, CurrencyReply>();
-            CreateMap<UpdateCurrencyRequest, Currency>();
-        }
+        CreateMap<Currency, CurrencyReply>();
+        CreateMap<UpdateCurrencyRequest, Currency>();
     }
 }

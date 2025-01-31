@@ -1,12 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Domain.Entities;
 
-namespace Entities;
-
-public class User
+public class User : EntityBase
 {
-    [Key]
-    public int Id { get; set; }
     public required string Name { get; set; }
     public required string Email { get; set; }
     public required string Password { get; set; }

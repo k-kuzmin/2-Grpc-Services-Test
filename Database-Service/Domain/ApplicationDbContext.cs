@@ -1,7 +1,7 @@
-﻿using Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Context;
+namespace Domain;
 
 public class ApplicationDbContext : DbContext
 {
@@ -12,9 +12,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.Favorites)
-            .WithMany(c => c.Users);
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
         base.OnModelCreating(modelBuilder);
     }

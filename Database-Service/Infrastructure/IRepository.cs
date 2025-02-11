@@ -2,11 +2,12 @@
 
 namespace Infrastructure;
 
-public interface IRepository<TEntity> where TEntity : EntityBase
+public interface IRepository<TEntity, TKey> 
+    where TEntity : class, IEntity
 {
     IQueryable<TEntity> GetAll();
-    Task<TEntity?> Get(Guid id, CancellationToken cancelationToken);
+    Task<TEntity?> Get(TKey id, CancellationToken cancelationToken);
     Task<TEntity> Create(TEntity entity, CancellationToken cancelationToken);
     Task<TEntity> Update(TEntity entity, CancellationToken cancelationToken);
-    Task Delete(Guid id, CancellationToken cancelationToken);
+    Task Delete(TKey id, CancellationToken cancelationToken);
 }

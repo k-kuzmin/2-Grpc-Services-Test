@@ -2,8 +2,8 @@
 
 namespace Infrastructure;
 
-public class Repository<TEntity> : IRepository<TEntity>
-    where TEntity : EntityBase
+public class Repository<TEntity, TKey> : IRepository<TEntity, TKey>
+    where TEntity : class, IEntity
 {
     private readonly ApplicationDbContext _context;
     public Repository(ApplicationDbContext context)
@@ -16,14 +16,13 @@ public class Repository<TEntity> : IRepository<TEntity>
         return _context.Set<TEntity>();
     }
 
-    public async Task<TEntity?> Get(Guid id, CancellationToken cancelationToken)
+    public async Task<TEntity?> Get(TKey id, CancellationToken cancelationToken)
     {
         return await _context.FindAsync<TEntity>(id, cancelationToken);
     }
 
     public async Task<TEntity> Create(TEntity entity, CancellationToken cancelationToken)
     {
-        entity.DateCreated = DateTimeOffset.UtcNow;
         await _context.AddAsync(entity, cancelationToken);
 
         return entity;
@@ -31,13 +30,12 @@ public class Repository<TEntity> : IRepository<TEntity>
 
     public Task<TEntity> Update(TEntity entity, CancellationToken cancelationToken)
     {
-        entity.DateUpdated = DateTimeOffset.UtcNow;
         _context.Update(entity);
 
         return Task.FromResult(entity);
     }
 
-    public async Task Delete(Guid id, CancellationToken cancelationToken)
+    public async Task Delete(TKey id, CancellationToken cancelationToken)
     {
         var entity = await Get(id, cancelationToken);
         if (entity != null)

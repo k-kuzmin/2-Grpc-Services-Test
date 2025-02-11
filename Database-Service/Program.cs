@@ -1,10 +1,15 @@
 using Domain;
+using Domain.Entities;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddIdentityCore<User>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
@@ -13,16 +18,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddGrpc();
 builder.Services.AddScoped<DbMigrationService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
 ApplyMigrate(app);
 
-// Configure the HTTP request pipeline.
 app.MapGrpcService<CurrencyGrpcService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();
 

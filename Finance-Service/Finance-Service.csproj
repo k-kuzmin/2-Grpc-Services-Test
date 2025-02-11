@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Finance_Service</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.2.0" />
+	<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
+	<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
+	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Database-Service\Protos\currency.proto" GrpcServices="Client">
+      <Link>Protos\currency.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+
+</Project>

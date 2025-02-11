@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace Domain.Entities;
 
-namespace Domain.Entities;
-
-public class Currency : EntityBase
+public class Currency : IEntity<Guid>
 {
+    public Guid Id { get; set; } = Guid.NewGuid();
+
     public required string Code { get; set; }
     public required string Name { get; set; }
     public decimal Rate { get; set; }

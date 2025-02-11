@@ -55,7 +55,7 @@ public class Worker : BackgroundService
                 _logger.LogError(ex, "An error occurred while making HTTP request.");
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
         }
     }
 

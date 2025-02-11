@@ -1,21 +1,45 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 option csharp_namespace = "Database_Service";
 
 package currency;
 
 service CurrencyService {
-  rpc UpdateCurrency (UpdateCurrencyRequest) returns (CurrencyReply);
+	rpc GetAll (google.protobuf.Empty) returns (CurrencyListReply);
+	rpc UpdateCurrency (UpdateCurrencyRequest) returns (ResultReply);
+	rpc GetFavoriteCurrencies (UserInfoRequest) returns (CurrencyListReply);
+	rpc AddFavoriteCurrency (AddFavoriteCurrencyRequest) returns (ResultReply);
 }
 
 message UpdateCurrencyRequest {
-  string code = 1;
-  string name = 2;
-  double rate = 3;
+	string code = 1;
+	string name = 2;
+	double rate = 3;
+}
+
+message UserInfoRequest {
+	string userName = 1;
+}
+
+message AddFavoriteCurrencyRequest {
+	string userName = 1;
+	string currencyId = 2;
 }
 
 message CurrencyReply {
-  string code = 1;
-  string name = 2;
-  double rate = 3;
+	string id = 1;
+	string code = 2;
+	string name = 3;
+	double rate = 4;
+}
+
+message CurrencyListReply {
+	repeated CurrencyReply Items = 1;
+}
+
+message ResultReply{
+	bool success = 1;
+	string message = 2;
 }

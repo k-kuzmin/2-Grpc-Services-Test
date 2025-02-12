@@ -5,6 +5,7 @@ using Domain.Entities;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         _userManager = userManager;
     }
 
+    [Authorize]
     public override async Task<CurrencyListReply> GetAll(Empty request, ServerCallContext context)
     {
         try
@@ -82,6 +84,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         }
     }
 
+    [Authorize]
     public override async Task<CurrencyListReply> GetFavoriteCurrencies(UserInfoRequest request, ServerCallContext context)
     {
         try
@@ -103,6 +106,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         }
     }
 
+    [Authorize]
     public override async Task<ResultReply> AddFavoriteCurrency(AddFavoriteCurrencyRequest request, ServerCallContext context)
     {
         try

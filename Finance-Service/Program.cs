@@ -11,8 +11,6 @@ var jwtSettings = new JwtSettings();
 builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
-// Add services to the container.
-
 builder.Services.AddGrpcClient<CurrencyService.CurrencyServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcServices:Currency"]);
@@ -20,11 +18,7 @@ builder.Services.AddGrpcClient<CurrencyService.CurrencyServiceClient>(options =>
 
 var key = Encoding.UTF8.GetBytes(jwtSettings.Secret);
 builder.Services
-    .AddAuthentication(x =>
-    {
-        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = false;
@@ -55,7 +49,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Введите JWT-токен"
+        Description = "Р’РІРµРґРёС‚Рµ JWT-С‚РѕРєРµРЅ"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement

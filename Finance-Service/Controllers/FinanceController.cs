@@ -1,5 +1,6 @@
 using Database_Service;
 using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,9 +22,11 @@ namespace Finance_Service.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllCurrencies(CancellationToken cancellationToken)
         {
-            var responce = await _currencyService.GetAllAsync(new Empty(), cancellationToken: cancellationToken);
-            
-            return Ok(responce);
+            var response = await _currencyService.GetAllAsync(new Empty(), 
+                GetAuthorizationHeader(), 
+                cancellationToken: cancellationToken);
+
+            return Ok(response);
         }
 
         [HttpGet("getFavoriteCurrencies")]
@@ -31,12 +34,14 @@ namespace Finance_Service.Controllers
         public async Task<IActionResult> GetFavoriteCurrencies(CancellationToken cancellationToken)
         {
             var username = User.Identity?.Name;
-            var responce = await _currencyService.GetFavoriteCurrenciesAsync(new UserInfoRequest
+            var response = await _currencyService.GetFavoriteCurrenciesAsync(new UserInfoRequest
             {
                 UserName = username
-            }, cancellationToken: cancellationToken);
+            },
+            GetAuthorizationHeader(),
+            cancellationToken: cancellationToken);
             
-            return Ok(responce);
+            return Ok(response);
         }
 
         [HttpPost("addFavoriteCurrencies")]
@@ -44,13 +49,25 @@ namespace Finance_Service.Controllers
         public async Task<IActionResult> AddFavoriteCurrencies(string currencyId, CancellationToken cancellationToken)
         {
             var username = User.Identity?.Name;
-            var responce = await _currencyService.AddFavoriteCurrencyAsync(new AddFavoriteCurrencyRequest
+            var response = await _currencyService.AddFavoriteCurrencyAsync(new AddFavoriteCurrencyRequest
             {
                 UserName = username,
                 CurrencyId = currencyId
-            }, cancellationToken: cancellationToken);
+            }, 
+            GetAuthorizationHeader(),
+            cancellationToken: cancellationToken);
 
-            return Ok(responce);
+            return Ok(response);
+        }
+
+        private Metadata GetAuthorizationHeader()
+        {
+            var token = Request.Headers.Authorization.ToString();
+            var headers = new Metadata
+            {
+                { "Authorization", token }
+            };
+            return headers;
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Domain;
 using Services;
+using DTOs;
 
 namespace Controllers;
 
@@ -52,7 +53,7 @@ public class UserController : ControllerBase
         }
 
         var token = _authService.GenerateJwtToken(user);
-        return Ok(new { Token = token });
+        return Ok(new LoginResponse(token));
     }
 
     [Authorize]

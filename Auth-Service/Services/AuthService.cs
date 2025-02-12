@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Text;
 using Domain;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,7 +16,7 @@ public class AuthService
         _jwtSettings = jwtSettings.Value;
     }
 
-    public string? GenerateJwtToken(User user)
+    public virtual string? GenerateJwtToken(User user)
     {
         var claims = new List<Claim>
         {

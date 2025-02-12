@@ -24,6 +24,7 @@ namespace Finance_Service.Controllers
         {
             var response = await _currencyService.GetAllAsync(new Empty(), 
                 GetAuthorizationHeader(), 
+                null,
                 cancellationToken: cancellationToken);
 
             return Ok(response);

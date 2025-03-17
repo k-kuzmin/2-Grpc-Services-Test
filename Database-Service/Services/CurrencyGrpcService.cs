@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Database_Service;
 using Domain.Entities;
@@ -11,35 +11,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
-public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
+public class CurrencyGrpcService(
+    IUnitOfWork unitOfWork,
+    ILogger<CurrencyGrpcService> logger,
+    IRepository<Currency, Guid> currencyRepository,
+    IMapper mapper,
+    UserManager<User> userManager) : CurrencyService.CurrencyServiceBase
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<CurrencyGrpcService> _logger;
-    private readonly IRepository<Currency, Guid> _currencyRepository;
-    private readonly IMapper _mapper;
-    private readonly UserManager<User> _userManager;
-
-    public CurrencyGrpcService(
-        IUnitOfWork unitOfWork,
-        ILogger<CurrencyGrpcService> logger,
-        IRepository<Currency, Guid> currencyRepository,
-        IMapper mapper,
-        UserManager<User> userManager)
-    {
-        _unitOfWork = unitOfWork;
-        _logger = logger;
-        _currencyRepository = currencyRepository;
-        _mapper = mapper;
-        _userManager = userManager;
-    }
-
     [Authorize]
     public override async Task<CurrencyListReply> GetAll(Empty request, ServerCallContext context)
     {
         try
         {
-            var allCurrencies = await _currencyRepository.GetAll()
-                .ProjectTo<CurrencyReply>(_mapper.ConfigurationProvider)
+            var allCurrencies = await currencyRepository.GetAll()
+                .ProjectTo<CurrencyReply>(mapper.ConfigurationProvider)
                 .ToListAsync(context.CancellationToken);
 
             var result = new CurrencyListReply();
@@ -49,7 +34,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, ex.Message);
+            logger.LogCritical(ex, ex.Message);
             throw new RpcException(new Status(StatusCode.Aborted, ex.Message));
         }
     }
@@ -58,18 +43,18 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
     {
         try
         {
-            var currency = await _currencyRepository.GetAll().FirstOrDefaultAsync(x => x.Code == request.Code, context.CancellationToken);
+            var currency = await currencyRepository.GetAll().FirstOrDefaultAsync(x => x.Code == request.Code, context.CancellationToken);
             if (currency == null)
             {
-                currency = await _currencyRepository.Create(_mapper.Map<Currency>(request), context.CancellationToken);
+                currency = await currencyRepository.Create(mapper.Map<Currency>(request), context.CancellationToken);
             }
             else
             {
-                currency = _mapper.Map(request, currency);
-                await _currencyRepository.Update(currency, context.CancellationToken);
+                currency = mapper.Map(request, currency);
+                await currencyRepository.Update(currency, context.CancellationToken);
             }
 
-            await _unitOfWork.Commit(context.CancellationToken);
+            await unitOfWork.Commit(context.CancellationToken);
 
             return new ResultReply()
             {
@@ -79,7 +64,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, ex.Message);
+            logger.LogCritical(ex, ex.Message);
             throw new RpcException(new Status(StatusCode.Aborted, ex.Message));
         }
     }
@@ -89,9 +74,9 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
     {
         try
         {
-            var favoriteCurrencies = await _currencyRepository.GetAll()
+            var favoriteCurrencies = await currencyRepository.GetAll()
                 .Where(x => x.Users.Any(user => user.UserName == request.UserName))
-                .ProjectTo<CurrencyReply>(_mapper.ConfigurationProvider)
+                .ProjectTo<CurrencyReply>(mapper.ConfigurationProvider)
                 .ToListAsync(context.CancellationToken);
 
             var result = new CurrencyListReply();
@@ -101,7 +86,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, ex.Message);
+            logger.LogCritical(ex, ex.Message);
             throw new RpcException(new Status(StatusCode.Aborted, ex.Message));
         }
     }
@@ -116,20 +101,20 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Invalid currency id"));
             }
 
-            var user = await _userManager.FindByNameAsync(request.UserName);
+            var user = await userManager.FindByNameAsync(request.UserName);
             if (user == null)
             {
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
             }
 
-            var currency = await _currencyRepository.Get(currencyId, context.CancellationToken);
+            var currency = await currencyRepository.Get(currencyId, context.CancellationToken);
             if (currency == null)
             {
                 throw new RpcException(new Status(StatusCode.NotFound, "Currency not found"));
             }
 
             user.Favorites.Add(currency);
-            await _unitOfWork.Commit(context.CancellationToken);
+            await unitOfWork.Commit(context.CancellationToken);
 
             return new ResultReply()
             {
@@ -143,7 +128,7 @@ public class CurrencyGrpcService : CurrencyService.CurrencyServiceBase
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, ex.Message);
+            logger.LogCritical(ex, ex.Message);
             throw new RpcException(new Status(StatusCode.Aborted, ex.Message));
         }
     }

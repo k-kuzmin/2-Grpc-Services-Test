@@ -2,23 +2,16 @@
 
 namespace Infrastructure;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 {
-    private readonly ApplicationDbContext _context;
-
-    public UnitOfWork(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task Commit(CancellationToken cancellationToken)
     {
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public void Dispose()
     {
-        _context.Dispose();
+        context.Dispose();
         GC.SuppressFinalize(this);
     }
 }

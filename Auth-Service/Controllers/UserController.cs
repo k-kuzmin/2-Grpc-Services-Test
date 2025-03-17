@@ -9,24 +9,17 @@ namespace Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController : ControllerBase
+public class UserController(
+    UserManager<User> userManager, 
+    SignInManager<User> signInManager, 
+    AuthService authService) : ControllerBase
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly AuthService _authService;
-
-    public UserController(UserManager<User> userManager, SignInManager<User> signInManager, AuthService authService)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _authService = authService;
-    }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] DTOs.RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var user = new User { UserName = request.Username, Email = request.Email };
-        var result = await _userManager.CreateAsync(user, request.Password);
+        var result = await userManager.CreateAsync(user, request.Password);
 
         if (result.Succeeded is false)
         {
@@ -37,22 +30,22 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] DTOs.LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var user = await _userManager.FindByNameAsync(request.Username);
+        var user = await userManager.FindByNameAsync(request.Username);
         if (user == null)
         {
             return Unauthorized("Invalid username or password");
         }
 
-        var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, isPersistent: false, lockoutOnFailure: false);
+        var result = await signInManager.PasswordSignInAsync(request.Username, request.Password, isPersistent: false, lockoutOnFailure: false);
 
         if (result.Succeeded is false)
         {
             return Unauthorized("Invalid username or password");
         }
 
-        var token = _authService.GenerateJwtToken(user);
+        var token = authService.GenerateJwtToken(user);
         return Ok(new LoginResponse(token));
     }
 
@@ -60,7 +53,7 @@ public class UserController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        await signInManager.SignOutAsync();
         return Ok("Logged out");
     }
 }

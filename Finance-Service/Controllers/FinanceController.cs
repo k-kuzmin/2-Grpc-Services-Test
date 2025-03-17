@@ -1,4 +1,4 @@
-using Database_Service;
+﻿using Database_Service;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -8,21 +8,14 @@ namespace Finance_Service.Controllers
 {
     [ApiController]
     [Route("api/finance")]
-    public class FinanceController : ControllerBase
+    public class FinanceController(
+        CurrencyService.CurrencyServiceClient currencyService) : ControllerBase
     {
-        private readonly CurrencyService.CurrencyServiceClient _currencyService;
-
-        public FinanceController(
-            CurrencyService.CurrencyServiceClient currencyService)
-        {
-            _currencyService = currencyService;
-        }
-
         [HttpGet("getAllCurrencies")]
         [Authorize]
         public async Task<IActionResult> GetAllCurrencies(CancellationToken cancellationToken)
         {
-            var response = await _currencyService.GetAllAsync(new Empty(), 
+            var response = await currencyService.GetAllAsync(new Empty(), 
                 GetAuthorizationHeader(), 
                 null,
                 cancellationToken: cancellationToken);
@@ -35,7 +28,7 @@ namespace Finance_Service.Controllers
         public async Task<IActionResult> GetFavoriteCurrencies(CancellationToken cancellationToken)
         {
             var username = User.Identity?.Name;
-            var response = await _currencyService.GetFavoriteCurrenciesAsync(new UserInfoRequest
+            var response = await currencyService.GetFavoriteCurrenciesAsync(new UserInfoRequest
             {
                 UserName = username
             },
@@ -50,7 +43,7 @@ namespace Finance_Service.Controllers
         public async Task<IActionResult> AddFavoriteCurrencies(string currencyId, CancellationToken cancellationToken)
         {
             var username = User.Identity?.Name;
-            var response = await _currencyService.AddFavoriteCurrencyAsync(new AddFavoriteCurrencyRequest
+            var response = await currencyService.AddFavoriteCurrencyAsync(new AddFavoriteCurrencyRequest
             {
                 UserName = username,
                 CurrencyId = currencyId
